@@ -8,13 +8,13 @@
 // Huxley: http://reprap.org/wiki/RepRapPro_Huxley_maintenance
 
 // Uncomment ONE of the next three lines - the one for your RepRap machine
-//#define REPRAPPRO_HUXLEY
+#define REPRAPPRO_HUXLEY
 //#define REPRAPPRO_MENDEL //Legacy Mendel
 //#define REPRAPPRO_MENDEL2 //Tricolour and Mono
 
 // Uncomment ONE of the next two lines - the one for your master controller electronics
-#define REPRAPPRO_MELZI
-//#define REPRAPPRO_SANGUINOLOLU
+//#define REPRAPPRO_MELZI
+#define REPRAPPRO_SANGUINOLOLU
 
 // Uncomment ONE of the next two lines - the one for the series resistors on your controller
 #define SERIAL_R 4700
@@ -56,8 +56,8 @@
 //User specified version info of THIS file to display in [Pronterface, etc] terminal window during startup.
 //Implementation of an idea by Prof Braino to inform user that any changes made
 //to THIS file by the user have been successfully uploaded into firmware.
-#define STRING_VERSION_CONFIG_H "2013-05-16-JMG" //Personal revision number for changes to THIS file.
-#define STRING_CONFIG_H_AUTHOR "eMAKER" //Who made the changes.
+#define STRING_VERSION_CONFIG_H "2014-02-09-EP" //Personal revision number for changes to THIS file.
+#define STRING_CONFIG_H_AUTHOR "epatel" //Who made the changes.
 
 // This determines the communication speed of the printer
 //#define BAUDRATE 250000
@@ -311,7 +311,8 @@ const bool Z_ENDSTOPS_INVERTING = false; // set to true to invert the logic of t
 
 // default settings 
 // X, Y, Z, E steps per mm
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {92.635, 92.635, 4000, 660} 
+//#define DEFAULT_AXIS_STEPS_PER_UNIT   {92.635, 92.635, 4000, 660}
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {91.429, 91.429, 4000, 875} // OLD HUXLEY (epatel)
 
 // Defaults changed by the G10 command
 
