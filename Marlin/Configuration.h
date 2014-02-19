@@ -15,7 +15,7 @@
 // User-specified version info of this build to display in [Pronterface, etc] terminal window during
 // startup. Implementation of an idea by Prof Braino to inform user that any changes made to this
 // build by the user have been successfully uploaded into firmware.
-#define STRING_VERSION_CONFIG_H "2014-02-15-EP" // __DATE__ " " __TIME__ // build date and time
+#define STRING_VERSION_CONFIG_H "2014-02-19-EP" // __DATE__ " " __TIME__ // build date and time
 #define STRING_CONFIG_H_AUTHOR "epatel" // "(none, default config)" // Who made the changes.
 
 // SERIAL_PORT selects which serial port should be used for communication with the host.
@@ -297,7 +297,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // true; // set to true to invert th
 #define DISABLE_Z true // false
 #define DISABLE_E false // For all extruders
 
-#define INVERT_X_DIR false // true    // for Mendel set to false, for Orca set to true
+#define INVERT_X_DIR true // true    // for Mendel set to false, for Orca set to true
 #define INVERT_Y_DIR false    // for Mendel set to true, for Orca set to false
 #define INVERT_Z_DIR false // true     // for Mendel set to false, for Orca set to true
 #define INVERT_E0_DIR true // false   // for direct drive extruder v9 set to true, for geared extruder set to false
@@ -369,8 +369,8 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // true; // set to true to invert th
 
   #ifdef Z_SAFE_HOMING
 
-    #define Z_SAFE_HOMING_X_POINT (X_MAX_LENGTH/2)    // X point for Z homing when homing all axis (G28)
-    #define Z_SAFE_HOMING_Y_POINT (Y_MAX_LENGTH/2)    // Y point for Z homing when homing all axis (G28)
+    #define Z_SAFE_HOMING_X_POINT 5 // (X_MAX_LENGTH/2)    // X point for Z homing when homing all axis (G28)
+    #define Z_SAFE_HOMING_Y_POINT 5 // (Y_MAX_LENGTH/2)    // Y point for Z homing when homing all axis (G28)
 
   #endif
 
