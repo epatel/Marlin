@@ -15,7 +15,7 @@
 // User-specified version info of this build to display in [Pronterface, etc] terminal window during
 // startup. Implementation of an idea by Prof Braino to inform user that any changes made to this
 // build by the user have been successfully uploaded into firmware.
-#define STRING_VERSION_CONFIG_H "2014-02-25-EP" // __DATE__ " " __TIME__ // build date and time
+#define STRING_VERSION_CONFIG_H "2014-03-02-EP" // __DATE__ " " __TIME__ // build date and time
 #define STRING_CONFIG_H_AUTHOR "epatel" // "(none, default config)" // Who made the changes.
 
 // SERIAL_PORT selects which serial port should be used for communication with the host.
@@ -180,9 +180,9 @@
 
 // If you are using a preconfigured hotend then you can use one of the value sets by uncommenting it
 // Ultimaker
-    #define  DEFAULT_Kp 12.0 // 22.2
-    #define  DEFAULT_Ki (2.2*PID_dT) // 1.08
-    #define  DEFAULT_Kd (80/PID_dT) // 114
+    #define  DEFAULT_Kp 66.95 // 12.0 // 22.2
+    #define  DEFAULT_Ki 12.46 // (2.2*PID_dT) // 1.08
+    #define  DEFAULT_Kd 89.94 // (80/PID_dT) // 114
 
 // Makergear
 //    #define  DEFAULT_Kp 7.0
@@ -332,10 +332,10 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // true; // set to true to invert th
 #ifdef ENABLE_AUTO_BED_LEVELING
 
   // these are the positions on the bed to do the probing
-  #define LEFT_PROBE_BED_POSITION 0 // 15
-  #define RIGHT_PROBE_BED_POSITION 170 // 170
-  #define BACK_PROBE_BED_POSITION 170 // 180
-  #define FRONT_PROBE_BED_POSITION 0 // 20
+  #define LEFT_PROBE_BED_POSITION 5 // 15
+  #define RIGHT_PROBE_BED_POSITION 180 // 170
+  #define BACK_PROBE_BED_POSITION 180 // 180
+  #define FRONT_PROBE_BED_POSITION 5 // 20
 
   // these are the offsets to the prob relative to the extruder tip (Hotend - Probe)
   #define X_PROBE_OFFSET_FROM_EXTRUDER 0 // -25
@@ -400,7 +400,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // true; // set to true to invert th
 
 //// MOVEMENT SETTINGS
 #define NUM_AXIS 4 // The axis order in all axis related arrays is X, Y, Z, E
-#define HOMING_FEEDRATE {10*60, 10*60, 1*60, 0} // {50*60, 50*60, 4*60, 0}  // set the homing speeds (mm/min)
+#define HOMING_FEEDRATE {30*60, 30*60, 2*60, 0} // {50*60, 50*60, 4*60, 0}  // set the homing speeds (mm/min)
 
 // default settings
 #define DEFAULT_AXIS_STEPS_PER_UNIT   {40, 40, 3200, 390.239655} // E measured 910
@@ -434,7 +434,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // true; // set to true to invert th
 // M501 - reads parameters from EEPROM (if you need reset them after you changed them temporarily).
 // M502 - reverts to the default "factory settings".  You still need to store them in EEPROM afterwards if you want to.
 //define this to enable eeprom support
-//#define EEPROM_SETTINGS
+#define EEPROM_SETTINGS
 //to disable EEPROM Serial responses and decrease program space by ~1700 byte: comment this out:
 // please keep turned on if you can.
 //#define EEPROM_CHITCHAT
