@@ -41,7 +41,7 @@
 	#endif
 
 // Default firmware set to Mendel	
-	#define FIRMWARE_URL "https://github.com/ErikZalm/Marlin/"
+	#define FIRMWARE_URL "https://github.com/epatel/Marlin/tree/Marlin_v1%2BManual_Leveling%2BMendel"
 #endif
 
 
