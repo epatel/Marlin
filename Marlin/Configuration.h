@@ -342,7 +342,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // true; // set to true to invert th
   #define Y_PROBE_OFFSET_FROM_EXTRUDER 0 // -29
   #define Z_PROBE_OFFSET_FROM_EXTRUDER 0 // -12.35
 
-  #define Z_RAISE_BEFORE_HOMING 4       // (in mm) Raise Z before homing (G28) for Probe Clearance.
+  #define Z_RAISE_BEFORE_HOMING 5       // (in mm) Raise Z before homing (G28) for Probe Clearance.
                                         // Be sure you have this distance over your Z_MAX_POS in case
 
   #define XY_TRAVEL_SPEED 4000 // 8000         // X and Y axis travel speed between probes, in mm/min
@@ -403,7 +403,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // true; // set to true to invert th
 #define HOMING_FEEDRATE {30*60, 30*60, 2*60, 0} // {50*60, 50*60, 4*60, 0}  // set the homing speeds (mm/min)
 
 // default settings
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {40.05, 40.05, 3360, 390.239655} // E measured 910
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {40.05, 40.05, 3360, 390.239655*0.85} // E measured 910
 //#define DEFAULT_AXIS_STEPS_PER_UNIT   {91.429, 91.429, 4000, 910} // E measured 910
 //#define DEFAULT_AXIS_STEPS_PER_UNIT   {91.429, 91.429, 4000, 875} // Huxley default
 //#define DEFAULT_AXIS_STEPS_PER_UNIT   {78.7402,78.7402,200.0*8/3,760*1.1}  // default steps per unit for Ultimaker
