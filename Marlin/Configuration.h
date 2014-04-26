@@ -15,7 +15,7 @@
 // User-specified version info of this build to display in [Pronterface, etc] terminal window during
 // startup. Implementation of an idea by Prof Braino to inform user that any changes made to this
 // build by the user have been successfully uploaded into firmware.
-#define STRING_VERSION_CONFIG_H "2014-04-05-EP" // __DATE__ " " __TIME__ // build date and time
+#define STRING_VERSION_CONFIG_H __DATE__ " " __TIME__ // build date and time
 #define STRING_CONFIG_H_AUTHOR "epatel" // "(none, default config)" // Who made the changes.
 
 // SERIAL_PORT selects which serial port should be used for communication with the host.
@@ -76,7 +76,7 @@
 #endif
 
 // Define this to set a custom name for your generic Mendel,
-#define CUSTOM_MENDEL_NAME "My Mendel"
+#define CUSTOM_MENDEL_NAME "Mendel"
 
 // Define this to set a unique identifier for this printer, (Used by some programs to differentiate between machines)
 // You can use an online service to generate a random UUID. (eg http://www.uuidgenerator.net/version4)
@@ -124,7 +124,7 @@
 // 52 is 200k thermistor - ATC Semitec 204GT-2 (1k pullup)
 // 55 is 100k thermistor - ATC Semitec 104GT-2 (Used in ParCan & J-Head) (1k pullup)
 
-#define TEMP_SENSOR_0 3  // -1
+#define TEMP_SENSOR_0 1  // -1
 #define TEMP_SENSOR_1 0   // -1
 #define TEMP_SENSOR_2 0
 #define TEMP_SENSOR_BED 0
@@ -179,9 +179,16 @@
 
 // If you are using a preconfigured hotend then you can use one of the value sets by uncommenting it
 // Ultimaker
-    #define  DEFAULT_Kp 66.95 // 12.0 // 22.2
-    #define  DEFAULT_Ki 12.46 // (2.2*PID_dT) // 1.08
-    #define  DEFAULT_Kd 89.94 // (80/PID_dT) // 114
+
+// M303 on Hexagon 3mm hotend
+  #define  DEFAULT_Kp 32.25
+  #define  DEFAULT_Ki 3.35
+  #define  DEFAULT_Kd 77.68
+
+// Orginal Mendel hotend
+//    #define  DEFAULT_Kp 66.95 // 12.0 // 22.2
+//    #define  DEFAULT_Ki 12.46 // (2.2*PID_dT) // 1.08
+//    #define  DEFAULT_Kd 89.94 // (80/PID_dT) // 114
 
 // Makergear
 //    #define  DEFAULT_Kp 7.0
@@ -402,7 +409,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // true; // set to true to invert th
 #define HOMING_FEEDRATE {30*60, 30*60, 2*60, 0} // {50*60, 50*60, 4*60, 0}  // set the homing speeds (mm/min)
 
 // default settings
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {40.05, 40.05, 3360, 390.239655*0.85} // E measured 910
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {40.05, 40.05, 3360, 240} // E measured 910
 //#define DEFAULT_AXIS_STEPS_PER_UNIT   {91.429, 91.429, 4000, 910} // E measured 910
 //#define DEFAULT_AXIS_STEPS_PER_UNIT   {91.429, 91.429, 4000, 875} // Huxley default
 //#define DEFAULT_AXIS_STEPS_PER_UNIT   {78.7402,78.7402,200.0*8/3,760*1.1}  // default steps per unit for Ultimaker
