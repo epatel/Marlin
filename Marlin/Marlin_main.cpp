@@ -1122,6 +1122,7 @@ void process_commands()
       previous_millis_cmd = millis();
       while(millis()  < codenum ){
         manage_heater();
+        manage_bulldog_fan();
         manage_inactivity();
         lcd_update();
       }
@@ -1640,12 +1641,14 @@ void process_commands()
         codenum += millis();  // keep track of when we started waiting
         while(millis()  < codenum && !lcd_clicked()){
           manage_heater();
+          manage_bulldog_fan();
           manage_inactivity();
           lcd_update();
         }
       }else{
         while(!lcd_clicked()){
           manage_heater();
+          manage_bulldog_fan();
           manage_inactivity();
           lcd_update();
         }
@@ -1965,6 +1968,7 @@ void process_commands()
             codenum = millis();
           }
           manage_heater();
+          manage_bulldog_fan();
           manage_inactivity();
           lcd_update();
         #ifdef TEMP_RESIDENCY_TIME
@@ -2012,6 +2016,7 @@ void process_commands()
             codenum = millis();
           }
           manage_heater();
+          manage_bulldog_fan();
           manage_inactivity();
           lcd_update();
         }
@@ -2471,6 +2476,7 @@ void process_commands()
 
             while(digitalRead(pin_number) != target){
               manage_heater();
+              manage_bulldog_fan();
               manage_inactivity();
               lcd_update();
             }
@@ -2778,6 +2784,7 @@ void process_commands()
         while(!lcd_clicked()){
           cnt++;
           manage_heater();
+          manage_bulldog_fan();
           manage_inactivity();
           lcd_update();
           if(cnt==0)
