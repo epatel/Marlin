@@ -331,6 +331,24 @@ extern "C"{
   }
 }
 
+void manage_bulldog_fan()
+{
+  static int is_on = -1;
+  if (is_on == -1)
+      pinMode(16, OUTPUT);
+  if (degHotend(tmp_extruder) > 100.0) {
+    if (is_on != 1) {
+      digitalWrite(16, HIGH);
+      is_on = 1;
+    }
+  } else {
+    if (is_on != 0) {
+      digitalWrite(16, LOW);
+      is_on = 0;
+    }
+  }
+}
+
 //adds an command to the main command buffer
 //thats really done in a non-safe way.
 //needs overworking someday
@@ -543,6 +561,7 @@ void loop()
   }
   //check heater every n milliseconds
   manage_heater();
+  manage_bulldog_fan();
   manage_inactivity();
   checkHitEndstops();
   lcd_update();

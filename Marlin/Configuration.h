@@ -409,7 +409,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // true; // set to true to invert th
 #define HOMING_FEEDRATE {30*60, 30*60, 2*60, 0} // {50*60, 50*60, 4*60, 0}  // set the homing speeds (mm/min)
 
 // default settings
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {40.05, 40.05, 3360, 240} // E measured 910
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {40, 40, 3360, 240} // E measured 910
 //#define DEFAULT_AXIS_STEPS_PER_UNIT   {91.429, 91.429, 4000, 910} // E measured 910
 //#define DEFAULT_AXIS_STEPS_PER_UNIT   {91.429, 91.429, 4000, 875} // Huxley default
 //#define DEFAULT_AXIS_STEPS_PER_UNIT   {78.7402,78.7402,200.0*8/3,760*1.1}  // default steps per unit for Ultimaker
