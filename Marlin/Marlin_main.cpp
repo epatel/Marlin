@@ -334,18 +334,24 @@ extern "C"{
 void manage_bulldog_fan()
 {
   static int is_on = -1;
-  if (is_on == -1)
-      pinMode(16, OUTPUT);
-  if (degHotend(tmp_extruder) > 100.0) {
-    if (is_on != 1) {
+  if (is_on == -1) {
+    pinMode(16, OUTPUT);
+    digitalWrite(16, LOW);
+    is_on = 0;
+  }
+  switch (is_on) {
+  case 0:
+    if (degHotend(tmp_extruder) > 100.0) {
       digitalWrite(16, HIGH);
       is_on = 1;
     }
-  } else {
-    if (is_on != 0) {
+    break;
+  case 1:
+    if (degHotend(tmp_extruder) < 95.0) {
       digitalWrite(16, LOW);
       is_on = 0;
     }
+    break;
   }
 }
 
