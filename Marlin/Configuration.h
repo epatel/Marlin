@@ -171,19 +171,20 @@
 #ifdef PIDTEMP
   //#define PID_DEBUG // Sends debug data to the serial port.
   //#define PID_OPENLOOP 1 // Puts PID in open loop. M104/M140 sets the output power from 0 to PID_MAX
-  #define PID_FUNCTIONAL_RANGE 10 // If the temperature difference between the target temperature and the actual temperature
-                                  // is more then PID_FUNCTIONAL_RANGE then the PID will be shut off and the heater will be set to min/max.
-  #define PID_INTEGRAL_DRIVE_MAX 125 // 255  //limit for the integral term
+  #define PID_INTEGRAL_DRIVE_MAX 255 // 125 // 255  //limit for the integral term
   #define K1 0.95 //smoothing factor within the PID
-  #define PID_dT 0.122 // ((OVERSAMPLENR * 8.0)/(F_CPU / 64.0 / 256.0)) //sampling period of the temperature routine
+  #define PID_dT ((16.0 * 8.0)/(F_CPU / 64.0 / 256.0)) //sampling period of the temperature routine
 
 // If you are using a preconfigured hotend then you can use one of the value sets by uncommenting it
 // Ultimaker
 
 // M303 on Hexagon 3mm hotend
-  #define  DEFAULT_Kp 32.25
-  #define  DEFAULT_Ki 3.35
-  #define  DEFAULT_Kd 77.68
+  #define  DEFAULT_Kp 7.45
+  #define  DEFAULT_Ki 1.31
+  #define  DEFAULT_Kd 10.62
+
+  #define PID_FUNCTIONAL_RANGE (255/DEFAULT_Kp) // 10 // If the temperature difference between the target temperature and the actual temperature
+                                  // is more then PID_FUNCTIONAL_RANGE then the PID will be shut off and the heater will be set to min/max.
 
 // Orginal Mendel hotend
 //    #define  DEFAULT_Kp 66.95 // 12.0 // 22.2

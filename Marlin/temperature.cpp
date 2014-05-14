@@ -161,6 +161,7 @@ unsigned long watchmillis[EXTRUDERS] = ARRAY_BY_EXTRUDERS(0,0,0);
 //===========================================================================
 //=============================   functions      ============================
 //===========================================================================
+extern void manage_bulldog_fan();
 
 void PID_autotune(float temp, int extruder, int ncycles)
 {
@@ -210,6 +211,8 @@ void PID_autotune(float temp, int extruder, int ncycles)
 
     if(temp_meas_ready == true) { // temp sample ready
       updateTemperaturesFromRawValues();
+
+      manage_bulldog_fan();
 
       input = (extruder<0)?current_temperature_bed:current_temperature[extruder];
 
