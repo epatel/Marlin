@@ -179,9 +179,9 @@
 // Ultimaker
 
 // M303 on Hexagon 3mm hotend
-  #define  DEFAULT_Kp 7.45
-  #define  DEFAULT_Ki 1.31
-  #define  DEFAULT_Kd 10.62
+  #define  DEFAULT_Kp 19.95
+  #define  DEFAULT_Ki 1.14
+  #define  DEFAULT_Kd 87.27
 
   #define PID_FUNCTIONAL_RANGE (255/DEFAULT_Kp) // 10 // If the temperature difference between the target temperature and the actual temperature
                                   // is more then PID_FUNCTIONAL_RANGE then the PID will be shut off and the heater will be set to min/max.
@@ -349,7 +349,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // true; // set to true to invert th
   #define Y_PROBE_OFFSET_FROM_EXTRUDER 0 // -29
   #define Z_PROBE_OFFSET_FROM_EXTRUDER 0 // -12.35
 
-  #define Z_RAISE_BEFORE_HOMING 5       // (in mm) Raise Z before homing (G28) for Probe Clearance.
+  #define Z_RAISE_BEFORE_HOMING 2       // (in mm) Raise Z before homing (G28) for Probe Clearance.
                                         // Be sure you have this distance over your Z_MAX_POS in case
 
   #define XY_TRAVEL_SPEED 4000 // 8000         // X and Y axis travel speed between probes, in mm/min
@@ -368,7 +368,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // true; // set to true to invert th
 //If you have enabled the Bed Auto Levelling and are using the same Z Probe for Z Homing,
 //it is highly recommended you let this Z_SAFE_HOMING enabled!!!
 
-  #define Z_SAFE_HOMING   // This feature is meant to avoid Z homing with probe outside the bed area.
+  //#define Z_SAFE_HOMING   // This feature is meant to avoid Z homing with probe outside the bed area.
                           // When defined, it will:
                           // - Allow Z homing only after X and Y homing AND stepper drivers still enabled
                           // - If stepper drivers timeout, it will need X and Y homing again before Z homing
@@ -427,7 +427,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // true; // set to true to invert th
 // #define EXTRUDER_OFFSET_Y {0.0, 5.00}  // (in mm) for each extruder, offset of the hotend on the Y axis
 
 // The speed change that does not require acceleration (i.e. the software might assume it can be done instantaneously)
-#define DEFAULT_XYJERK                10.0    // (mm/sec)
+#define DEFAULT_XYJERK                5.0    // (mm/sec)
 #define DEFAULT_ZJERK                 0.4     // (mm/sec)
 #define DEFAULT_EJERK                 5.0    // (mm/sec)
 

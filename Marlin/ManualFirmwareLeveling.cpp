@@ -6,9 +6,11 @@
 
 #ifdef ENABLE_AUTO_BED_LEVELING
 
+struct s_manual_bed_values manual_bed_values = {0,0,0};
+
 void g31_manual_firmware_leveling()
 {
-	float z_origin, z_right_front, z_left_back;
+	float z_origin, z_right_front, z_left_back, z_offset;
 	bool ok = true;
 	if (code_seen('O')) {
 		z_origin = code_value();
@@ -28,16 +30,30 @@ void g31_manual_firmware_leveling()
 		ok = false;
 	}
 	
-	if (ok) {
-		set_bed_level_equation(-z_origin, -z_right_front, -z_left_back);
+	if (code_seen('Z')) {
+		z_offset = code_value();
 	} else {
-		SERIAL_PROTOCOLLN("G31 needs O(rigin) R(ight) and B(back) offsets");
+		ok = false;
+	}
+	
+	if (ok) {
+		manual_bed_values.z_origin = z_origin;
+		manual_bed_values.z_right_front = z_right_front;
+		manual_bed_values.z_left_back = z_left_back;
+		zprobe_zoffset = z_offset;
+		set_bed_level_equation(-manual_bed_values.z_origin, -manual_bed_values.z_right_front, -manual_bed_values.z_left_back);
+	} else {
+		SERIAL_PROTOCOLLN("G31 needs O(rigin) R(ight) B(back) and Z(origin real offset) offsets");
 	}
 }
 
 void g32_clear_manual_firmware_leveling()
 {
 	st_synchronize();
+    manual_bed_values.z_origin = 0; 
+    manual_bed_values.z_right_front = 0; 
+    manual_bed_values.z_left_back = 0;
+    zprobe_zoffset = 0;
 	plan_bed_level_matrix.set_to_identity();
 	SERIAL_PROTOCOLLN("Bed leveling matrix cleared");
 }

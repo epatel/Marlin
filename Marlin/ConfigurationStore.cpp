@@ -3,6 +3,7 @@
 #include "temperature.h"
 #include "ultralcd.h"
 #include "ConfigurationStore.h"
+#include "ManualFirmwareLeveling.h"
 
 void _EEPROM_writeData(int &pos, uint8_t* value, uint8_t size)
 {
@@ -26,18 +27,14 @@ void _EEPROM_readData(int &pos, uint8_t* value, uint8_t size)
 #define EEPROM_READ_VAR(pos, value) _EEPROM_readData(pos, (uint8_t*)&value, sizeof(value))
 //======================================================================================
 
-
-
-
 #define EEPROM_OFFSET 100
-
 
 // IMPORTANT:  Whenever there are changes made to the variables stored in EEPROM
 // in the functions below, also increment the version number. This makes sure that
 // the default values are used whenever there is a change to the data, to prevent
 // wrong data being written to the variables.
 // ALSO:  always make sure the variables in the Store and retrieve sections are in the same order.
-#define EEPROM_VERSION "V10"
+#define EEPROM_VERSION "EP1"
 
 #ifdef EEPROM_SETTINGS
 void Config_StoreSettings() 
@@ -45,6 +42,8 @@ void Config_StoreSettings()
   char ver[4]= "000";
   int i=EEPROM_OFFSET;
   EEPROM_WRITE_VAR(i,ver); // invalidate data first 
+  EEPROM_WRITE_VAR(i,manual_bed_values);
+  EEPROM_WRITE_VAR(i,zprobe_zoffset);
   EEPROM_WRITE_VAR(i,axis_steps_per_unit);  
   EEPROM_WRITE_VAR(i,max_feedrate);  
   EEPROM_WRITE_VAR(i,max_acceleration_units_per_sq_second);
@@ -98,6 +97,15 @@ void Config_StoreSettings()
 #ifndef DISABLE_M503
 void Config_PrintSettings()
 {  // Always have this function, even with EEPROM_SETTINGS disabled, the current values will be shown
+    SERIAL_ECHO_START;
+    SERIAL_ECHOLNPGM("Bed level values:");
+    SERIAL_ECHO_START;
+    SERIAL_ECHOPAIR("  G31 O",manual_bed_values.z_origin);
+    SERIAL_ECHOPAIR(" R",manual_bed_values.z_right_front);
+    SERIAL_ECHOPAIR(" B",manual_bed_values.z_left_back);
+    SERIAL_ECHOPAIR(" Z",zprobe_zoffset);
+    SERIAL_ECHOLN("");
+
     SERIAL_ECHO_START;
     SERIAL_ECHOLNPGM("Steps per unit:");
     SERIAL_ECHO_START;
@@ -182,12 +190,14 @@ void Config_RetrieveSettings()
     if (strncmp(ver,stored_ver,3) == 0)
     {
         // version number match
+        EEPROM_READ_VAR(i,manual_bed_values);  
+        EEPROM_READ_VAR(i,zprobe_zoffset);
         EEPROM_READ_VAR(i,axis_steps_per_unit);  
         EEPROM_READ_VAR(i,max_feedrate);  
         EEPROM_READ_VAR(i,max_acceleration_units_per_sq_second);
         
         // steps per sq second need to be updated to agree with the units per sq second (as they are what is used in the planner)
-		reset_acceleration_rates();
+        reset_acceleration_rates();
         
         EEPROM_READ_VAR(i,acceleration);
         EEPROM_READ_VAR(i,retract_acceleration);
@@ -198,13 +208,13 @@ void Config_RetrieveSettings()
         EEPROM_READ_VAR(i,max_z_jerk);
         EEPROM_READ_VAR(i,max_e_jerk);
         EEPROM_READ_VAR(i,add_homeing);
-        #ifdef DELTA
+#ifdef DELTA
         EEPROM_READ_VAR(i,endstop_adj);
-        #endif
-        #ifndef ULTIPANEL
+#endif
+#ifndef ULTIPANEL
         int plaPreheatHotendTemp, plaPreheatHPBTemp, plaPreheatFanSpeed;
         int absPreheatHotendTemp, absPreheatHPBTemp, absPreheatFanSpeed;
-        #endif
+#endif
         EEPROM_READ_VAR(i,plaPreheatHotendTemp);
         EEPROM_READ_VAR(i,plaPreheatHPBTemp);
         EEPROM_READ_VAR(i,plaPreheatFanSpeed);
@@ -212,20 +222,20 @@ void Config_RetrieveSettings()
         EEPROM_READ_VAR(i,absPreheatHPBTemp);
         EEPROM_READ_VAR(i,absPreheatFanSpeed);
         EEPROM_READ_VAR(i,zprobe_zoffset);
-        #ifndef PIDTEMP
+#ifndef PIDTEMP
         float Kp,Ki,Kd;
-        #endif
-        // do not need to scale PID values as the values in EEPROM are already scaled		
+#endif
+        // do not need to scale PID values as the values in EEPROM are already scaled       
         EEPROM_READ_VAR(i,Kp);
         EEPROM_READ_VAR(i,Ki);
         EEPROM_READ_VAR(i,Kd);
-        #ifndef DOGLCD
+#ifndef DOGLCD
         int lcd_contrast;
-        #endif
+#endif
         EEPROM_READ_VAR(i,lcd_contrast);
 
-		// Call updatePID (similar to when we have processed M301)
-		updatePID();
+        // Call updatePID (similar to when we have processed M301)
+        updatePID();
         SERIAL_ECHO_START;
         SERIAL_ECHOLNPGM("Stored settings retrieved");
     }
@@ -251,6 +261,8 @@ void Config_ResetDefault()
         max_acceleration_units_per_sq_second[i]=tmp3[i];
     }
     
+    g32_clear_manual_firmware_leveling();
+
     // steps per sq second need to be updated to agree with the units per sq second
     reset_acceleration_rates();
     
