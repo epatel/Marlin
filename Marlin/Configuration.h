@@ -179,9 +179,9 @@
 
 // If you are using a preconfigured hotend then you can use one of the value sets by uncommenting it
 // Ultimaker
-    #define  DEFAULT_Kp 12.0 // 22.2
-    #define  DEFAULT_Ki (2.2*PID_dT) // 1.08
-    #define  DEFAULT_Kd (80/PID_dT) // 114
+    #define  DEFAULT_Kp 20.56
+    #define  DEFAULT_Ki 2.56
+    #define  DEFAULT_Kd 40.77
 
 // Makergear
 //    #define  DEFAULT_Kp 7.0
@@ -360,7 +360,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // true; // set to true to invert th
 //If you have enabled the Bed Auto Levelling and are using the same Z Probe for Z Homing,
 //it is highly recommended you let this Z_SAFE_HOMING enabled!!!
 
-  #define Z_SAFE_HOMING   // This feature is meant to avoid Z homing with probe outside the bed area.
+  //#define Z_SAFE_HOMING   // This feature is meant to avoid Z homing with probe outside the bed area.
                           // When defined, it will:
                           // - Allow Z homing only after X and Y homing AND stepper drivers still enabled
                           // - If stepper drivers timeout, it will need X and Y homing again before Z homing
@@ -418,9 +418,9 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // true; // set to true to invert th
 // #define EXTRUDER_OFFSET_Y {0.0, 5.00}  // (in mm) for each extruder, offset of the hotend on the Y axis
 
 // The speed change that does not require acceleration (i.e. the software might assume it can be done instantaneously)
-#define DEFAULT_XYJERK                15.0 // 20.0    // (mm/sec)
+#define DEFAULT_XYJERK                5.0    // (mm/sec)
 #define DEFAULT_ZJERK                 0.4     // (mm/sec)
-#define DEFAULT_EJERK                 15.0 // 5.0    // (mm/sec)
+#define DEFAULT_EJERK                 5.0 // 5.0    // (mm/sec)
 
 //===========================================================================
 //=============================Additional Features===========================

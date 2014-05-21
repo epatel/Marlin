@@ -1280,6 +1280,7 @@ void process_commands()
             #if defined (Z_RAISE_BEFORE_HOMING) && (Z_RAISE_BEFORE_HOMING > 0)
               destination[Z_AXIS] = Z_RAISE_BEFORE_HOMING * home_dir(Z_AXIS) * (-1);    // Set destination away from bed
               feedrate = max_feedrate[Z_AXIS];
+              plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
               plan_buffer_line(destination[X_AXIS], destination[Y_AXIS], destination[Z_AXIS], destination[E_AXIS], feedrate, active_extruder);
               st_synchronize();
             #endif
@@ -1343,6 +1344,7 @@ void process_commands()
         }
       #endif
       plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
+      set_bed_level_equation(-manual_bed_values.z_origin, -manual_bed_values.z_right_front, -manual_bed_values.z_left_back);
 #endif // else DELTA
 
       #ifdef ENDSTOPS_ONLY_FOR_HOMING
