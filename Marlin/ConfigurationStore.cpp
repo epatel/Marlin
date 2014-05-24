@@ -43,7 +43,6 @@ void Config_StoreSettings()
   int i=EEPROM_OFFSET;
   EEPROM_WRITE_VAR(i,ver); // invalidate data first 
   EEPROM_WRITE_VAR(i,manual_bed_values);
-  EEPROM_WRITE_VAR(i,zprobe_zoffset);
   EEPROM_WRITE_VAR(i,axis_steps_per_unit);  
   EEPROM_WRITE_VAR(i,max_feedrate);  
   EEPROM_WRITE_VAR(i,max_acceleration_units_per_sq_second);
@@ -191,7 +190,6 @@ void Config_RetrieveSettings()
     {
         // version number match
         EEPROM_READ_VAR(i,manual_bed_values);  
-        EEPROM_READ_VAR(i,zprobe_zoffset);
         EEPROM_READ_VAR(i,axis_steps_per_unit);  
         EEPROM_READ_VAR(i,max_feedrate);  
         EEPROM_READ_VAR(i,max_acceleration_units_per_sq_second);

@@ -1,6 +1,8 @@
 #ifndef MANUALFIRMWARELEVELING_H
 #define MANUALFIRMWARELEVELING_H
 
+#define BED_LEVEL_LIFT 4
+
 struct s_manual_bed_values {
 	float z_origin, z_right_front, z_left_back;
 };

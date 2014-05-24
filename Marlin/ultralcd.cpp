@@ -7,6 +7,7 @@
 #include "temperature.h"
 #include "stepper.h"
 #include "ConfigurationStore.h"
+#include "ManualFirmwareLeveling.h"
 
 int8_t encoderDiff; /* encoderDiff is updated from interrupt context and added to encoderPosition every LCD update */
 
@@ -51,6 +52,7 @@ static void lcd_main_menu();
 static void lcd_tune_menu();
 static void lcd_prepare_menu();
 static void lcd_move_menu();
+static void lcd_start_level_bed();
 static void lcd_control_menu();
 static void lcd_control_temperature_menu();
 static void lcd_control_temperature_preheat_pla_settings_menu();
@@ -450,6 +452,7 @@ static void lcd_prepare_menu()
     }
 #endif
     MENU_ITEM(submenu, MSG_MOVE_AXIS, lcd_move_menu);
+    MENU_ITEM(submenu, MSG_LEVEL_BED, lcd_start_level_bed);
     END_MENU();
 }
 
@@ -608,6 +611,74 @@ static void lcd_move_menu()
     MENU_ITEM(submenu, MSG_MOVE_01MM, lcd_move_menu_01mm);
     //TODO:X,Y,Z,E
     END_MENU();
+}
+static int leveling_state;
+static float leveling_z_offsets[3];
+static void lcd_level_z()
+{
+    if (encoderPosition != 0)
+    {
+        current_position[Z_AXIS] += float((int)encoderPosition) * 0.1;
+        if (min_software_endstops && current_position[Z_AXIS] < Z_MIN_POS)
+            current_position[Z_AXIS] = Z_MIN_POS;
+        if (max_software_endstops && current_position[Z_AXIS] > Z_MAX_POS)
+            current_position[Z_AXIS] = Z_MAX_POS;
+        encoderPosition = 0;
+        #ifdef DELTA
+        calculate_delta(current_position);
+        plan_buffer_line(delta[X_AXIS], delta[Y_AXIS], delta[Z_AXIS], current_position[E_AXIS], manual_feedrate[Z_AXIS]/60, active_extruder);
+        #else
+        plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], manual_feedrate[Z_AXIS]/60, active_extruder);
+        #endif
+        lcdDrawUpdate = 1;
+    }
+    if (lcdDrawUpdate)
+    {
+        lcd_implementation_drawedit(PSTR("Z"), ftostr31(current_position[Z_AXIS]));
+    }
+    if (LCD_CLICKED)
+    {
+        leveling_z_offsets[leveling_state] = current_position[Z_AXIS];
+        // Lift 2 mm
+        current_position[Z_AXIS] += 2;
+        #ifdef DELTA
+        calculate_delta(current_position);
+        plan_buffer_line(delta[X_AXIS], delta[Y_AXIS], delta[Z_AXIS], current_position[E_AXIS], manual_feedrate[Z_AXIS]/60, active_extruder);
+        #else
+        plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], manual_feedrate[Z_AXIS]/60, active_extruder);
+        #endif
+        switch (leveling_state) {
+        case 0:
+            enquecommand_P(PSTR("G33 R"));
+            break;
+        case 1:
+            enquecommand_P(PSTR("G33 B"));
+            break;
+        case 2:
+            manual_bed_values.z_origin      = BED_LEVEL_LIFT - leveling_z_offsets[0];
+            manual_bed_values.z_right_front = BED_LEVEL_LIFT - leveling_z_offsets[1];
+            manual_bed_values.z_left_back   = BED_LEVEL_LIFT - leveling_z_offsets[2];
+            zprobe_zoffset                  = manual_bed_values.z_origin + 0.1;
+            current_position[Z_AXIS]       -= zprobe_zoffset;
+            set_bed_level_equation(-manual_bed_values.z_origin, -manual_bed_values.z_right_front, -manual_bed_values.z_left_back);
+            currentMenu = lcd_prepare_menu;
+            break;
+        }
+        leveling_state++;
+        lcd_quick_feedback();
+        encoderPosition = 0;
+    }
+}
+static void lcd_start_level_bed()
+{
+    enquecommand_P(PSTR("G32"));
+    enquecommand_P(PSTR("G28"));
+    enquecommand_P(PSTR("G92 Z" STRINGIFY_(BED_LEVEL_LIFT)));
+    enquecommand_P(PSTR("G33 O"));
+    currentMenu = lcd_level_z;
+    lcd_quick_feedback();
+    encoderPosition = 0;
+    leveling_state = 0;
 }
 
 static void lcd_control_menu()
