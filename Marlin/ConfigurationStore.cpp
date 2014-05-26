@@ -34,7 +34,7 @@ void _EEPROM_readData(int &pos, uint8_t* value, uint8_t size)
 // the default values are used whenever there is a change to the data, to prevent
 // wrong data being written to the variables.
 // ALSO:  always make sure the variables in the Store and retrieve sections are in the same order.
-#define EEPROM_VERSION "EP1"
+#define EEPROM_VERSION "EP2"
 
 #ifdef EEPROM_SETTINGS
 void Config_StoreSettings() 
@@ -43,7 +43,6 @@ void Config_StoreSettings()
   int i=EEPROM_OFFSET;
   EEPROM_WRITE_VAR(i,ver); // invalidate data first 
   EEPROM_WRITE_VAR(i,manual_bed_values);
-  EEPROM_WRITE_VAR(i,zprobe_zoffset);
   EEPROM_WRITE_VAR(i,axis_steps_per_unit);  
   EEPROM_WRITE_VAR(i,max_feedrate);  
   EEPROM_WRITE_VAR(i,max_acceleration_units_per_sq_second);
@@ -191,7 +190,6 @@ void Config_RetrieveSettings()
     {
         // version number match
         EEPROM_READ_VAR(i,manual_bed_values);  
-        EEPROM_READ_VAR(i,zprobe_zoffset);
         EEPROM_READ_VAR(i,axis_steps_per_unit);  
         EEPROM_READ_VAR(i,max_feedrate);  
         EEPROM_READ_VAR(i,max_acceleration_units_per_sq_second);
@@ -236,6 +234,7 @@ void Config_RetrieveSettings()
 
         // Call updatePID (similar to when we have processed M301)
         updatePID();
+        set_bed_level_equation(-manual_bed_values.z_origin, -manual_bed_values.z_right_front, -manual_bed_values.z_left_back);
         SERIAL_ECHO_START;
         SERIAL_ECHOLNPGM("Stored settings retrieved");
     }
