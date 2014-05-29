@@ -163,6 +163,7 @@ bool lcd_oldcardstatus;
 
 menuFunc_t currentMenu = lcd_status_screen; /* function pointer to the currently active menu */
 uint32_t lcd_next_update_millis;
+unsigned long timeoutToStatus = 0;
 uint8_t lcd_status_update_delay;
 uint8_t lcdDrawUpdate = 2;                  /* Set to none-zero when the LCD needs to draw, decreased after every draw. Set to 2 in LCD routines so the LCD gets atleast 1 full redraw (first redraw is partial) */
 
@@ -616,6 +617,8 @@ static int leveling_state;
 static float leveling_z_offsets[3];
 static void lcd_level_z()
 {
+    timeoutToStatus = millis() +  LCD_TIMEOUT_TO_STATUS;
+    lcdDrawUpdate = 1;
     if (encoderPosition != 0)
     {
         current_position[Z_AXIS] += float((int)encoderPosition) * 0.1;
@@ -630,12 +633,8 @@ static void lcd_level_z()
         #else
         plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], manual_feedrate[Z_AXIS]/60, active_extruder);
         #endif
-        lcdDrawUpdate = 1;
     }
-    if (lcdDrawUpdate)
-    {
-        lcd_implementation_drawedit(PSTR("Z"), ftostr31(current_position[Z_AXIS]));
-    }
+    lcd_implementation_drawedit(PSTR("Z"), ftostr31(current_position[Z_AXIS]));
     if (LCD_CLICKED)
     {
         leveling_z_offsets[leveling_state] = current_position[Z_AXIS];
@@ -662,6 +661,7 @@ static void lcd_level_z()
             current_position[Z_AXIS]       -= zprobe_zoffset;
             set_bed_level_equation(-manual_bed_values.z_origin, -manual_bed_values.z_right_front, -manual_bed_values.z_left_back);
             currentMenu = lcd_prepare_menu;
+            enquecommand_P(PSTR("G1 X0 Y0 Z4 F4000"));
             break;
         }
         leveling_state++;
@@ -673,8 +673,10 @@ static void lcd_start_level_bed()
 {
     enquecommand_P(PSTR("G32"));
     enquecommand_P(PSTR("G28"));
-    enquecommand_P(PSTR("G92 Z" STRINGIFY_(BED_LEVEL_LIFT)));
+    enquecommand_P(PSTR("G92 Z4"));
     enquecommand_P(PSTR("G33 O"));
+    timeoutToStatus = millis() +  30*1000;
+    lcdDrawUpdate = 1;
     currentMenu = lcd_level_z;
     lcd_quick_feedback();
     encoderPosition = 0;
@@ -1110,8 +1112,6 @@ void lcd_init()
 
 void lcd_update()
 {
-    static unsigned long timeoutToStatus = 0;
-
     #ifdef LCD_HAS_SLOW_BUTTONS
     slow_buttons = lcd_implementation_read_slow_buttons(); // buttons which take too long to read in interrupt context
     #endif

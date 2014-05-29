@@ -37,12 +37,10 @@ void g31_manual_firmware_leveling()
 	}
 	
 	if (ok) {
-		st_synchronize();
 		manual_bed_values.z_origin      = z_origin;
 		manual_bed_values.z_right_front = z_right_front;
 		manual_bed_values.z_left_back   = z_left_back;
 		zprobe_zoffset                  = z_offset;
-		current_position[Z_AXIS]       -= zprobe_zoffset;
 		set_bed_level_equation(-manual_bed_values.z_origin, -manual_bed_values.z_right_front, -manual_bed_values.z_left_back);
 	} else {
 		SERIAL_PROTOCOLLN("G31 needs O(rigin) R(ight) B(back) and Z(origin real offset) offsets");
