@@ -76,11 +76,11 @@
 #endif
 
 // Define this to set a custom name for your generic Mendel,
-#define CUSTOM_MENDEL_NAME "Mendel"
+#define CUSTOM_MENDEL_NAME "Huxley"
 
 // Define this to set a unique identifier for this printer, (Used by some programs to differentiate between machines)
 // You can use an online service to generate a random UUID. (eg http://www.uuidgenerator.net/version4)
-#define MACHINE_UUID "41F6BBD5-A1E0-49CE-98F6-8A709C3A7A97"
+#define MACHINE_UUID "3FCA4AE7-FEF1-4DAD-980E-63B0CB1CE6A5"
 
 // This defines the number of extruders
 #define EXTRUDERS 1
@@ -124,7 +124,7 @@
 // 52 is 200k thermistor - ATC Semitec 204GT-2 (1k pullup)
 // 55 is 100k thermistor - ATC Semitec 104GT-2 (Used in ParCan & J-Head) (1k pullup)
 
-#define TEMP_SENSOR_0 1  // -1
+#define TEMP_SENSOR_0 10  // -1
 #define TEMP_SENSOR_1 0   // -1
 #define TEMP_SENSOR_2 0
 #define TEMP_SENSOR_BED 0
@@ -171,20 +171,17 @@
 #ifdef PIDTEMP
   //#define PID_DEBUG // Sends debug data to the serial port.
   //#define PID_OPENLOOP 1 // Puts PID in open loop. M104/M140 sets the output power from 0 to PID_MAX
-  #define PID_INTEGRAL_DRIVE_MAX 255 // 125 // 255  //limit for the integral term
+  #define PID_FUNCTIONAL_RANGE 10 // If the temperature difference between the target temperature and the actual temperature
+                                  // is more then PID_FUNCTIONAL_RANGE then the PID will be shut off and the heater will be set to min/max.
+  #define PID_INTEGRAL_DRIVE_MAX 125 // 255  //limit for the integral term
   #define K1 0.95 //smoothing factor within the PID
-  #define PID_dT ((16.0 * 8.0)/(F_CPU / 64.0 / 256.0)) //sampling period of the temperature routine
+  #define PID_dT 0.122 // ((OVERSAMPLENR * 8.0)/(F_CPU / 64.0 / 256.0)) //sampling period of the temperature routine
 
 // If you are using a preconfigured hotend then you can use one of the value sets by uncommenting it
 // Ultimaker
-
-// M303 on Hexagon 3mm hotend
-  #define  DEFAULT_Kp 19.95
-  #define  DEFAULT_Ki 1.14
-  #define  DEFAULT_Kd 87.27
-
-  #define PID_FUNCTIONAL_RANGE (255/DEFAULT_Kp) // 10 // If the temperature difference between the target temperature and the actual temperature
-                                  // is more then PID_FUNCTIONAL_RANGE then the PID will be shut off and the heater will be set to min/max.
+    #define  DEFAULT_Kp 20.56
+    #define  DEFAULT_Ki 2.56
+    #define  DEFAULT_Kd 40.77
 
 // Orginal Mendel hotend
 //    #define  DEFAULT_Kp 66.95 // 12.0 // 22.2
@@ -257,7 +254,7 @@
 // #define COREXY
 
 // coarse Endstop Settings
-//#define ENDSTOPPULLUPS // Comment this out (using // at the start of the line) to disable the endstop pullup resistors
+#define ENDSTOPPULLUPS // Comment this out (using // at the start of the line) to disable the endstop pullup resistors
 
 #ifndef ENDSTOPPULLUPS
   // fine Enstop settings: Individual Pullups. will be ignored if ENDSTOPPULLUPS is defined
@@ -285,7 +282,7 @@ const bool Z_MIN_ENDSTOP_INVERTING = false; // set to true to invert the logic o
 const bool X_MAX_ENDSTOP_INVERTING = false; // true; // set to true to invert the logic of the endstop.
 const bool Y_MAX_ENDSTOP_INVERTING = false; // true; // set to true to invert the logic of the endstop.
 const bool Z_MAX_ENDSTOP_INVERTING = false; // true; // set to true to invert the logic of the endstop.
-#define DISABLE_MAX_ENDSTOPS
+//#define DISABLE_MAX_ENDSTOPS
 //#define DISABLE_MIN_ENDSTOPS
 
 // Disable max endstops for compatibility with endstop checking routine
@@ -305,10 +302,10 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // true; // set to true to invert th
 #define DISABLE_Z true // false
 #define DISABLE_E false // For all extruders
 
-#define INVERT_X_DIR false // true    // for Mendel set to false, for Orca set to true
-#define INVERT_Y_DIR true // for Mendel set to true, for Orca set to false
+#define INVERT_X_DIR true // true    // for Mendel set to false, for Orca set to true
+#define INVERT_Y_DIR false // for Mendel set to true, for Orca set to false
 #define INVERT_Z_DIR false // true     // for Mendel set to false, for Orca set to true
-#define INVERT_E0_DIR false // false   // for direct drive extruder v9 set to true, for geared extruder set to false
+#define INVERT_E0_DIR true // false   // for direct drive extruder v9 set to true, for geared extruder set to false
 #define INVERT_E1_DIR true // false    // for direct drive extruder v9 set to true, for geared extruder set to false
 #define INVERT_E2_DIR true // false   // for direct drive extruder v9 set to true, for geared extruder set to false
 
@@ -322,9 +319,9 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // true; // set to true to invert th
 #define max_software_endstops true  // If true, axis won't move to coordinates greater than the defined lengths below.
 
 // Travel limits after homing
-#define X_MAX_POS 195
+#define X_MAX_POS 140
 #define X_MIN_POS 0
-#define Y_MAX_POS 205
+#define Y_MAX_POS 140
 #define Y_MIN_POS 0
 #define Z_MAX_POS 110
 #define Z_MIN_POS 0
@@ -340,8 +337,8 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // true; // set to true to invert th
 
   // these are the positions on the bed to do the probing
   #define LEFT_PROBE_BED_POSITION 5 // 15
-  #define RIGHT_PROBE_BED_POSITION 180 // 170
-  #define BACK_PROBE_BED_POSITION 180 // 180
+  #define RIGHT_PROBE_BED_POSITION 135 // 170
+  #define BACK_PROBE_BED_POSITION 135 // 180
   #define FRONT_PROBE_BED_POSITION 5 // 20
 
   // these are the offsets to the prob relative to the extruder tip (Hotend - Probe)
@@ -349,7 +346,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // true; // set to true to invert th
   #define Y_PROBE_OFFSET_FROM_EXTRUDER 0 // -29
   #define Z_PROBE_OFFSET_FROM_EXTRUDER 0 // -12.35
 
-  #define Z_RAISE_BEFORE_HOMING 2       // (in mm) Raise Z before homing (G28) for Probe Clearance.
+  #define Z_RAISE_BEFORE_HOMING 4       // (in mm) Raise Z before homing (G28) for Probe Clearance.
                                         // Be sure you have this distance over your Z_MAX_POS in case
 
   #define XY_TRAVEL_SPEED 4000 // 8000         // X and Y axis travel speed between probes, in mm/min
@@ -407,18 +404,20 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // true; // set to true to invert th
 
 //// MOVEMENT SETTINGS
 #define NUM_AXIS 4 // The axis order in all axis related arrays is X, Y, Z, E
-#define HOMING_FEEDRATE {30*60, 30*60, 2*60, 0} // {50*60, 50*60, 4*60, 0}  // set the homing speeds (mm/min)
+//#define HOMING_FEEDRATE {30*60, 30*60, 2*60, 0} // {50*60, 50*60, 4*60, 0}  // set the homing speeds (mm/min)
+#define HOMING_FEEDRATE {10*60, 10*60, 1*60, 0} // {50*60, 50*60, 4*60, 0}  // set the homing speeds (mm/min)
 
 // default settings
-#define DEFAULT_AXIS_STEPS_PER_UNIT   {40, 40, 3360, 250} // E measured 910
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {91.429/2.0, 91.429/2.0, 4000/2.0, 910/2.0} // E measured 910
+//#define DEFAULT_AXIS_STEPS_PER_UNIT   {40, 40, 3360, 250} // E measured 910
 //#define DEFAULT_AXIS_STEPS_PER_UNIT   {91.429, 91.429, 4000, 910} // E measured 910
 //#define DEFAULT_AXIS_STEPS_PER_UNIT   {91.429, 91.429, 4000, 875} // Huxley default
 //#define DEFAULT_AXIS_STEPS_PER_UNIT   {78.7402,78.7402,200.0*8/3,760*1.1}  // default steps per unit for Ultimaker
 #define DEFAULT_MAX_FEEDRATE          {500, 500, 5, 45} // {500, 500, 5, 25}    // (mm/sec)
 #define DEFAULT_MAX_ACCELERATION      {1000,1000,50,250} // {9000,9000,100,10000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for skeinforge 40+, for older versions raise them a lot.
 
-#define DEFAULT_ACCELERATION          500 // 3000   // X, Y, Z and E max acceleration in mm/s^2 for printing moves
-#define DEFAULT_RETRACT_ACCELERATION  500 // 3000   // X, Y, Z and E max acceleration in mm/s^2 for retracts
+#define DEFAULT_ACCELERATION          1000 // 3000   // X, Y, Z and E max acceleration in mm/s^2 for printing moves
+#define DEFAULT_RETRACT_ACCELERATION  1000 // 3000   // X, Y, Z and E max acceleration in mm/s^2 for retracts
 
 // Offset of the extruders (uncomment if using more than one and relying on firmware to position when changing).
 // The offset has to be X=0, Y=0 for the extruder 0 hotend (default extruder).
