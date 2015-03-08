@@ -22,6 +22,8 @@
 #include "Configuration.h"
 #include "pins.h"
 
+#define FAN_PIN -1 // Using RAMPS_13_EFB but want to use EXTRUDER_0_AUTO_FAN_PIN so modify FAN_PIN here
+
 #ifndef AT90USB
   #define  HardwareSerial_h // trick to disable the standard HWserial
 #endif
