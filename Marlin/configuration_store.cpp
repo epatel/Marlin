@@ -14,7 +14,7 @@
  *
  */
 
-#define EEPROM_VERSION "V21"
+#define EEPROM_VERSION "V22"
 
 /**
  * V19 EEPROM Layout:
@@ -34,11 +34,14 @@
  *  M205 E    max_e_jerk
  *  M206 XYZ  home_offset (x3)
  *
- * Mesh bed leveling:
+ * MESH BED LEVELING:
  *  M420 S    active
+ *            z_offset
  *            mesh_num_x (set in firmware)
  *            mesh_num_y (set in firmware)
  *  M421 XYZ  z_values[][]
+ *
+ * AUTO BED LEVELING:
  *  M851      zprobe_zoffset
  *
  * DELTA:
@@ -159,12 +162,15 @@ void Config_StoreSettings()  {
   mesh_num_x = MESH_NUM_X_POINTS;
   mesh_num_y = MESH_NUM_Y_POINTS;
   EEPROM_WRITE_VAR(i, mbl.active);
+  EEPROM_WRITE_VAR(i, mbl.z_offset);
   EEPROM_WRITE_VAR(i, mesh_num_x);
   EEPROM_WRITE_VAR(i, mesh_num_y);
   EEPROM_WRITE_VAR(i, mbl.z_values);
 #else
   uint8_t dummy_uint8 = 0;
-  EEPROM_WRITE_VAR(i, dummy_uint8);
+  EEPROM_WRITE_VAR(i, dummy_uint8); // active dummy
+  dummy = 0.0f;
+  EEPROM_WRITE_VAR(i, dummy);       // z_offset dummy
   EEPROM_WRITE_VAR(i, mesh_num_x);
   EEPROM_WRITE_VAR(i, mesh_num_y);
   dummy = 0.0f;
@@ -304,11 +310,14 @@ void Config_RetrieveSettings() {
     EEPROM_READ_VAR(i, max_e_jerk);
     EEPROM_READ_VAR(i, home_offset);
     uint8_t dummy_uint8 = 0, mesh_num_x = 0, mesh_num_y = 0;
+    dummy = 0.0f;
     EEPROM_READ_VAR(i, dummy_uint8);
+    EEPROM_READ_VAR(i, dummy);
     EEPROM_READ_VAR(i, mesh_num_x);
     EEPROM_READ_VAR(i, mesh_num_y);
 #if ENABLED(MESH_BED_LEVELING)
     mbl.active = dummy_uint8;
+    mbl.z_offset = dummy;
     if (mesh_num_x == MESH_NUM_X_POINTS && mesh_num_y == MESH_NUM_Y_POINTS)
       EEPROM_READ_VAR(i, mbl.z_values); else {
       mbl.reset();
