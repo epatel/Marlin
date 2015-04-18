@@ -46,6 +46,8 @@
     #define DOGLCD
     #define U8GLIB_ST7920
     #define REPRAP_DISCOUNT_SMART_CONTROLLER
+    #define ENCODER_PULSES_PER_STEP 4
+    #define ENCODER_STEPS_PER_MENU_ITEM 1
   #endif
 
   #if defined(ULTIMAKERCONTROLLER) || defined(REPRAP_DISCOUNT_SMART_CONTROLLER) || defined(G3D_PANEL)
@@ -211,6 +213,11 @@
   #endif
 
   #include "pins.h"
+
+#define FAN_PIN -1 // Using RAMPS_13_EFB but want to use EXTRUDER_0_AUTO_FAN_PIN so modify FAN_PIN here
+#define BEEPER -1  // Turn beeper off
+#define BTN_EN1 33 // Swap encoder direction
+#define BTN_EN2 31
 
   /**
    * ENDSTOPPULLUPS
