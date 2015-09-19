@@ -439,6 +439,9 @@ const bool Z_MIN_PROBE_ENDSTOP_INVERTING = false; // set to true to invert the l
 //=========================== Manual Bed Leveling ===========================
 //===========================================================================
 
+// For usage see the doc written for Mesh/Manual Bed Leveling
+// https://github.com/MarlinFirmware/MarlinDev/blob/9a093b2e8f/Documentation/MeshBedLeveling.md
+
 //#define MANUAL_BED_LEVELING  // Add display menu option for bed leveling.
 //#define MESH_BED_LEVELING    // Enable mesh bed leveling.
 
