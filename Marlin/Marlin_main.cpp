@@ -1985,7 +1985,7 @@ inline void gcode_G28() {
   reset_bed_level();
 #endif
 #endif
-  // For manual bed leveling deactivate the matrix temporarily
+  // For manual bed leveling deactivate the mesh calculations, will be turned on again when homing all axis
 #if ENABLED(MESH_BED_LEVELING)
   uint8_t mbl_was_active = mbl.active;
   mbl.active = 0;
@@ -2222,18 +2222,17 @@ inline void gcode_G28() {
 #endif
   enable_endstops(false);
 #endif
-  // For manual leveling move back to 0,0
+  // For manual leveling move back to Z=0
 #if ENABLED(MESH_BED_LEVELING)
-  if (mbl_was_active) {
-    current_position[X_AXIS] = mbl.get_x(0);
-    current_position[Y_AXIS] = mbl.get_y(0);
-    set_destination_to_current();
-    feedrate = homing_feedrate[X_AXIS];
-    line_to_destination();
-    st_synchronize();
+  if (mbl_was_active && home_all_axis) {
     current_position[Z_AXIS] = MESH_HOME_SEARCH_Z;
     sync_plan_position();
     mbl.active = 1;
+    current_position[Z_AXIS] = 0.0;
+    set_destination_to_current();
+    feedrate = homing_feedrate[Z_AXIS];
+    line_to_destination();
+    st_synchronize();
 #if ENABLED(DEBUG_LEVELING_FEATURE)
     if (marlin_debug_flags & DEBUG_LEVELING)
       print_xyz("mbl_was_active > current_position", current_position);
