@@ -217,7 +217,7 @@
   #include "pins.h"
 
 #define FAN_PIN -1 // Using RAMPS_13_EFB but want to use EXTRUDER_0_AUTO_FAN_PIN so modify FAN_PIN here
-#define BEEPER -1  // Turn beeper off
+#define BEEPER_PIN -1  // Turn beeper off
 #define BTN_EN1 33 // Swap encoder direction
 #define BTN_EN2 31
 
