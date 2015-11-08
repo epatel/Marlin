@@ -220,6 +220,7 @@
 #define BEEPER_PIN -1  // Turn beeper off
 #define BTN_EN1 33 // Swap encoder direction
 #define BTN_EN2 31
+#define Z_MIN_PROBE_PIN  19
 
   #ifndef USBCON
     #define HardwareSerial_h // trick to disable the standard HWserial

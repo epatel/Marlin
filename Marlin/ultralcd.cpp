@@ -72,7 +72,10 @@ static void lcd_control_volumetric_menu();
   #include "mesh_bed_leveling.h"
   static void _lcd_level_bed();
   static void _lcd_level_bed_homing();
-  static void lcd_level_bed();
+  static void lcd_level_bed_menu();
+  static void lcd_level_bed_manual();
+  static void lcd_level_bed_auto();
+  static void lcd_level_bed_offset();
 #endif
 
 /* Different types of actions that can be used in menu items. */
@@ -472,7 +475,7 @@ static void lcd_tune_menu() {
   //
   // Bed Z:
   //
-  MENU_ITEM_EDIT(float43, MSG_BED_Z, &mbl.z_offset, -1, 1);
+  MENU_ITEM_EDIT(float43, MSG_BED_Z, &mbl.z_offset, -3, 3);
 #endif
   //
   // Nozzle:
@@ -685,7 +688,7 @@ static void lcd_prepare_menu() {
   if (axis_known_position[X_AXIS] && axis_known_position[Y_AXIS])
     MENU_ITEM(gcode, MSG_LEVEL_BED, PSTR("G29"));
 #elif ENABLED(MANUAL_BED_LEVELING)
-  MENU_ITEM(submenu, MSG_LEVEL_BED, lcd_level_bed);
+  MENU_ITEM(submenu, MSG_LEVEL_BED, lcd_level_bed_menu);
 #endif
   //
   // Move Axis
@@ -1106,7 +1109,7 @@ static void lcd_control_motion_menu() {
   MENU_ITEM_EDIT(float32, MSG_ZPROBE_ZOFFSET, &zprobe_zoffset, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
 #endif
 #if ENABLED(MANUAL_BED_LEVELING)
-  MENU_ITEM_EDIT(float43, MSG_BED_Z, &mbl.z_offset, -1, 1);
+  MENU_ITEM_EDIT(float43, MSG_BED_Z, &mbl.z_offset, -3, 3);
 #endif
   MENU_ITEM_EDIT(float5, MSG_ACC, &acceleration, 10, 99000);
   MENU_ITEM_EDIT(float3, MSG_VXY_JERK, &max_xy_jerk, 1, 990);
@@ -2019,6 +2022,7 @@ char* ftostr52(const float& x) {
 
 #if ENABLED(MANUAL_BED_LEVELING)
 
+extern bool mesh_is_leveling;
 static int _lcd_level_bed_position;
 
 /**
@@ -2069,6 +2073,28 @@ static void _lcd_level_bed() {
     debounce_click = false;
 }
 
+static void _lcd_level_bed_offset() {
+  if (encoderPosition != 0) {
+    refresh_cmd_timeout();
+    mbl.z_offset += float((int)encoderPosition) * MBL_Z_STEP;
+    if (min_software_endstops && current_position[Z_AXIS] < Z_MIN_POS) current_position[Z_AXIS] = Z_MIN_POS;
+    if (max_software_endstops && current_position[Z_AXIS] > Z_MAX_POS) current_position[Z_AXIS] = Z_MAX_POS;
+    encoderPosition = 0;
+    line_to_current(Z_AXIS);
+    lcdDrawUpdate = 2;
+  }
+  if (lcdDrawUpdate) lcd_implementation_drawedit(PSTR("Z"), ftostr43(mbl.z_offset));
+  static bool debounce_click = false;
+  if (LCD_CLICKED) {
+    if (!debounce_click) {
+      debounce_click = true;
+      enqueuecommands_P(PSTR("G28"));
+      lcd_return_to_status();
+    }
+  } else
+    debounce_click = false;
+}
+
 /**
  * MBL Move to mesh starting point
  */
@@ -2086,15 +2112,65 @@ static void _lcd_level_bed_homing() {
   lcdDrawUpdate = 2;
 }
 
+static void _lcd_level_bed_homing_offset() {
+  if (lcdDrawUpdate) lcd_implementation_drawedit(PSTR("XYZ"), "Homing");
+  if (axis_known_position[X_AXIS] && axis_known_position[Y_AXIS] && axis_known_position[Z_AXIS]) {
+    current_position[Z_AXIS] = MESH_HOME_SEARCH_Z;
+    plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
+    current_position[X_AXIS] = MESH_MIN_X;
+    current_position[Y_AXIS] = MESH_MIN_Y;
+    line_to_current(manual_feedrate[X_AXIS] <= manual_feedrate[Y_AXIS] ? X_AXIS : Y_AXIS);
+    lcd_goto_menu(_lcd_level_bed_offset);
+  }
+  lcdDrawUpdate = 2;
+}
+
 /**
- * MBL entry-point
+ * MBL Move to mesh starting point
  */
-static void lcd_level_bed() {
+static void _lcd_level_bed_probing() {
+  if (lcdDrawUpdate) lcd_implementation_drawedit(PSTR("XYZ"), "Probing");
+  if (!mesh_is_leveling) {
+    axis_known_position[X_AXIS] = axis_known_position[Y_AXIS] = axis_known_position[Z_AXIS] = false;
+    enqueuecommands_P(PSTR("G28"));
+    lcd_return_to_status();
+  }
+  lcdDrawUpdate = 2;
+}
+
+/**
+ * MBL entry-points
+ */
+static void lcd_level_bed_menu() {
+  START_MENU();
+  MENU_ITEM(back, MSG_PREPARE, lcd_prepare_menu);
+  MENU_ITEM(submenu, MSG_LEVEL_BED_AUTO, lcd_level_bed_auto);
+  MENU_ITEM(submenu, MSG_LEVEL_BED_OFFSET, lcd_level_bed_offset);
+  MENU_ITEM(submenu, MSG_LEVEL_BED_MANUAL, lcd_level_bed_manual);
+  END_MENU();
+}
+
+static void lcd_level_bed_manual() {
   axis_known_position[X_AXIS] = axis_known_position[Y_AXIS] = axis_known_position[Z_AXIS] = false;
   mbl.reset();
   enqueuecommands_P(PSTR("G28"));
   lcdDrawUpdate = 2;
   lcd_goto_menu(_lcd_level_bed_homing);
+}
+
+static void lcd_level_bed_auto() {
+  mesh_is_leveling = true;
+  enqueuecommands_P(PSTR("G29 S5"));
+  lcdDrawUpdate = 2;
+  lcd_goto_menu(_lcd_level_bed_probing);
+}
+
+static void lcd_level_bed_offset() {
+  axis_known_position[X_AXIS] = axis_known_position[Y_AXIS] = axis_known_position[Z_AXIS] = false;
+  mbl.z_offset = 0;
+  enqueuecommands_P(PSTR("G28"));
+  lcdDrawUpdate = 2;
+  lcd_goto_menu(_lcd_level_bed_homing_offset);
 }
 
 #endif  // MANUAL_BED_LEVELING

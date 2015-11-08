@@ -108,6 +108,15 @@
 #ifndef MSG_LEVEL_BED
   #define MSG_LEVEL_BED                       "Level bed"
 #endif
+#ifndef MSG_LEVEL_BED_MANUAL
+  #define MSG_LEVEL_BED_MANUAL                "Level bed manual"
+#endif
+#ifndef MSG_LEVEL_BED_AUTO
+  #define MSG_LEVEL_BED_AUTO                  "Level bed auto"
+#endif
+#ifndef MSG_LEVEL_BED_OFFSET
+  #define MSG_LEVEL_BED_OFFSET                "Level bed offset"
+#endif
 #ifndef MSG_MOVE_X
   #define MSG_MOVE_X                          "Move X"
 #endif

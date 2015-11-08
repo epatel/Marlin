@@ -2251,7 +2251,9 @@ inline void gcode_G28() {
 
 #if ENABLED(MESH_BED_LEVELING)
 
-enum MeshLevelingState { MeshReport, MeshStart, MeshNext, MeshSet, MeshSetZOffset };
+enum MeshLevelingState { MeshReport, MeshStart, MeshNext, MeshSet, MeshSetZOffset, MeshProbeStart, MeshProbePoints };
+
+bool mesh_is_leveling = false;
 
 /**
  * G29: Mesh-based Z probe, probes a grid and produces a
@@ -2260,10 +2262,12 @@ enum MeshLevelingState { MeshReport, MeshStart, MeshNext, MeshSet, MeshSetZOffse
  * Parameters With MESH_BED_LEVELING:
  *
  *  S0              Produce a mesh report
- *  S1              Start probing mesh points
+ *  S1              Start probing mesh points manually
  *  S2              Probe the next mesh point
  *  S3 Xn Yn Zn.nn  Manually modify a single point
  *  S4 Zn.nn        Set z offset. Positive away from bed, negative closer to bed.
+ *  S5              Start probing mesh points automatically
+ *  S6              Probe mesh points
  *
  * The S0 report the points as below
  *
@@ -2276,8 +2280,8 @@ enum MeshLevelingState { MeshReport, MeshStart, MeshNext, MeshSet, MeshSetZOffse
 inline void gcode_G29() {
   static int probe_point = -1;
   MeshLevelingState state = code_seen('S') ? (MeshLevelingState)code_value_short() : MeshReport;
-  if (state < 0 || state > 4) {
-    SERIAL_PROTOCOLLNPGM("S out of range (0-4).");
+  if (state < 0 || state > 6) {
+    SERIAL_PROTOCOLLNPGM("S out of range (0-6).");
     return;
   }
   int ix, iy;
@@ -2382,6 +2386,50 @@ inline void gcode_G29() {
       return;
     }
     mbl.z_offset = z;
+    break;
+  case MeshProbeStart: 
+    mesh_is_leveling = true;
+    mbl.reset();
+    enqueuecommands_P(PSTR("G28\nG1 Z4\nG29 S6"));
+    break;
+  case MeshProbePoints: {
+      enable_endstops(true);
+      st_synchronize();
+
+      int ix, iy;
+      float zLevel = current_position[Z_AXIS];
+
+      for (int probe_point=0; probe_point<MESH_NUM_X_POINTS*MESH_NUM_Y_POINTS; probe_point++) {
+        ix = probe_point % MESH_NUM_X_POINTS;
+        iy = probe_point / MESH_NUM_X_POINTS;
+        if (iy & 1) ix = (MESH_NUM_X_POINTS - 1) - ix; // zig-zag
+        current_position[X_AXIS] = mbl.get_x(ix);
+        current_position[Y_AXIS] = mbl.get_y(iy);
+        current_position[Z_AXIS] = zLevel;
+        feedrate = homing_feedrate[X_AXIS]*2.0;
+        line_to_current_position();
+        st_synchronize();
+        feedrate = homing_feedrate[Z_AXIS]/2.0;
+        line_to_z(-(Z_MAX_LENGTH + 10));
+        st_synchronize();
+        endstops_hit_on_purpose();
+        current_position[Z_AXIS] = st_get_position_mm(Z_AXIS);
+        mbl.set_z(ix, iy, current_position[Z_AXIS] + MESH_HOME_SEARCH_Z);
+        sync_plan_position();
+        line_to_z(zLevel);
+        st_synchronize();
+      }
+
+      current_position[X_AXIS] = mbl.get_x(0);
+      current_position[Y_AXIS] = mbl.get_y(0);
+      current_position[Z_AXIS] = zLevel;
+      feedrate = homing_feedrate[X_AXIS];
+      line_to_current_position();
+      st_synchronize();
+
+      mbl.active = 1;
+      mesh_is_leveling = false;
+    }
   } // switch(state)
 }
 
