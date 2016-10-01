@@ -111,7 +111,7 @@
 #define EXTRUDER_1_AUTO_FAN_PIN -1
 #define EXTRUDER_2_AUTO_FAN_PIN -1
 #define EXTRUDER_3_AUTO_FAN_PIN -1
-#define EXTRUDER_AUTO_FAN_TEMPERATURE 100
+#define EXTRUDER_AUTO_FAN_TEMPERATURE 50
 #define EXTRUDER_AUTO_FAN_SPEED   255  // == full speed
 
 
@@ -389,7 +389,7 @@
 #define MM_PER_ARC_SEGMENT 1
 #define N_ARC_CORRECTION 25
 
-const unsigned int dropsegments = 5; //everything with less than this number of steps will be ignored as move and joined with the next movement
+const unsigned int dropsegments = 2; //everything with less than this number of steps will be ignored as move and joined with the next movement
 
 // @section temperature
 
