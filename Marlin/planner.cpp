@@ -459,7 +459,10 @@ float junction_deviation = 0.1;
   // Rest here until there is room in the buffer.
   while (block_buffer_tail == next_buffer_head) idle();
 #if ENABLED(MESH_BED_LEVELING)
-  if (mbl.active) z += mbl.get_z(x, y);
+  if (mbl.active) {
+    x -= y * (XY_SKEW_DIAGONAL_DIFF) / ((XY_SKEW_FRAME_LEN) * 2.82842712474619009760);
+    z += mbl.get_z(x, y);    
+  }
 #elif ENABLED(AUTO_BED_LEVELING_FEATURE)
   apply_rotation_xyz(plan_bed_level_matrix, x, y, z);
 #endif
@@ -919,7 +922,10 @@ vector_3 plan_get_position() {
 #endif // AUTO_BED_LEVELING_FEATURE || MESH_BED_LEVELING
 {
 #if ENABLED(MESH_BED_LEVELING)
-  if (mbl.active) z += mbl.get_z(x, y);
+  if (mbl.active) {
+    x -= y * (XY_SKEW_DIAGONAL_DIFF) / ((XY_SKEW_FRAME_LEN) * 2.82842712474619009760);
+    z += mbl.get_z(x, y);    
+  }
 #elif ENABLED(AUTO_BED_LEVELING_FEATURE)
   apply_rotation_xyz(plan_bed_level_matrix, x, y, z);
 #endif
