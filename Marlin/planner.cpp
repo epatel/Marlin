@@ -460,7 +460,7 @@ float junction_deviation = 0.1;
   while (block_buffer_tail == next_buffer_head) idle();
 #if ENABLED(MESH_BED_LEVELING)
   if (mbl.active) {
-    x -= y * (XY_SKEW_DIAGONAL_DIFF) / ((XY_SKEW_FRAME_LEN) * 2.82842712474619009760);
+    x -= y * (XY_SKEW_DIAGONAL_DIFF) / ((XY_SKEW_FRAME_LEN) * M_SQRT2 * 2.0);
     z += mbl.get_z(x, y);    
   }
 #elif ENABLED(AUTO_BED_LEVELING_FEATURE)
@@ -923,7 +923,7 @@ vector_3 plan_get_position() {
 {
 #if ENABLED(MESH_BED_LEVELING)
   if (mbl.active) {
-    x -= y * (XY_SKEW_DIAGONAL_DIFF) / ((XY_SKEW_FRAME_LEN) * 2.82842712474619009760);
+    x -= y * (XY_SKEW_DIAGONAL_DIFF) / ((XY_SKEW_FRAME_LEN) * M_SQRT2 * 2.0);
     z += mbl.get_z(x, y);    
   }
 #elif ENABLED(AUTO_BED_LEVELING_FEATURE)
