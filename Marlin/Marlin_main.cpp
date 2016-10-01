@@ -2405,16 +2405,23 @@ inline void gcode_G29() {
         if (iy & 1) ix = (MESH_NUM_X_POINTS - 1) - ix; // zig-zag
         current_position[X_AXIS] = mbl.get_x(ix);
         current_position[Y_AXIS] = mbl.get_y(iy);
-        current_position[Z_AXIS] = zLevel;
+#define NUM_PROBE_SAMPLES 3
+        float sum = 0;
         feedrate = homing_feedrate[X_AXIS]*2.0;
-        line_to_current_position();
-        st_synchronize();
-        feedrate = homing_feedrate[Z_AXIS]/2.0;
-        line_to_z(-(Z_MAX_LENGTH + 10));
-        st_synchronize();
+        for (uint8_t i=0; i<NUM_PROBE_SAMPLES; i++) {
+          current_position[Z_AXIS] = zLevel;
+          line_to_current_position();
+          st_synchronize();
+          feedrate = homing_feedrate[Z_AXIS]/2.0;
+          line_to_z(-(Z_MAX_LENGTH + 10));
+          st_synchronize();
+          current_position[Z_AXIS] = st_get_position_mm(Z_AXIS);
+          sync_plan_position();
+          sum += current_position[Z_AXIS];
+          feedrate = homing_feedrate[Z_AXIS]*2.0;
+        }
         endstops_hit_on_purpose();
-        current_position[Z_AXIS] = st_get_position_mm(Z_AXIS);
-        mbl.set_z(ix, iy, current_position[Z_AXIS] + MESH_HOME_SEARCH_Z);
+        mbl.set_z(ix, iy, (sum / NUM_PROBE_SAMPLES) + MESH_HOME_SEARCH_Z);
         sync_plan_position();
         line_to_z(zLevel);
         st_synchronize();
