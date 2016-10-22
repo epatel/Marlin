@@ -519,7 +519,9 @@ static void lcd_tune_menu() {
   //
   // Flow:
   //
+#if EXTRUDERS > 1
   MENU_ITEM_EDIT(int3, MSG_FLOW, &extruder_multiplier[active_extruder], 10, 999);
+#endif
   //
   // Flow:
   // Flow 1:
