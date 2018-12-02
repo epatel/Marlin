@@ -209,10 +209,10 @@ Here are some standard links for getting your machine calibrated:
 
   // If you are using a pre-configured hotend then you can use one of the value sets by uncommenting it
   // RAMPS 1.4 + Pico Hotend
-  #define  DEFAULT_Kp 17.11
-  #define  DEFAULT_Ki 0.77
-  #define  DEFAULT_Kd 94.64
-  
+  #define  DEFAULT_Kp 26.15
+  #define  DEFAULT_Ki 2.20
+  #define  DEFAULT_Kd 77.77
+
   // Ultimaker
   //#define  DEFAULT_Kp 22.2
   //#define  DEFAULT_Ki 1.08

@@ -1321,9 +1321,23 @@ ISR(TIMER0_COMPB_vect) {
     break;
   case MeasureTemp_0:
 #if HAS_TEMP_0
-    raw_temp_value[0] += ADC;
+    //raw_temp_value[0] += ADC;
 #endif
-    temp_state = PrepareTemp_BED;
+    //temp_state = PrepareTemp_BED;
+    temp_state = PrepareTemp_0;
+    {
+      static unsigned long temp0 = 0;
+      static uint8_t lc = 5;
+      temp0 += ADC;
+      if (lc) {
+        lc--;
+      } else {
+        lc = 5;
+        raw_temp_value[0] += temp0 / 6;
+        temp0 = 0;
+        temp_count++;
+      }
+    }
     break;
   case PrepareTemp_BED:
 #if HAS_TEMP_BED

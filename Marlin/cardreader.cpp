@@ -308,7 +308,7 @@ void CardReader::openFile(char* name, bool read, bool replace_current/*=true*/) 
     if (file.open(curDir, fname, O_READ)) {
       filesize = file.fileSize();
       SERIAL_PROTOCOLPGM(MSG_SD_FILE_OPENED);
-      SERIAL_PROTOCOL(fname);
+      SERIAL_PROTOCOL(longFilename[0] ? longFilename : fname);
       SERIAL_PROTOCOLPGM(MSG_SD_SIZE);
       SERIAL_PROTOCOLLN(filesize);
       sdpos = 0;

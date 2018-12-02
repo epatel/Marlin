@@ -14,7 +14,7 @@
  *
  */
 
-#define EEPROM_VERSION "V22"
+#define EEPROM_VERSION "V00"
 
 /**
  * V19 EEPROM Layout:
